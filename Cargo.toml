@@ -1,0 +1,16 @@
+[package]
+authors = ["Austin Hellyer <hello@austinhellyer.me>"]
+description = "Unofficial Rust wrapper for the osu! API."
+documentation = "https://docs.austinhellyer.me/osu"
+homepage = "https://github.com/zeyla/osu.rs"
+license = "ISC"
+keywords = ["osu", "api"]
+name = "osu"
+readme = "README.md"
+repository = "https://github.com/zeyla/osu.rs.git"
+version = "0.1.0"
+
+[dependencies]
+bitflags = "0.7"
+hyper = "0.9"
+serde_json = "0.8"
