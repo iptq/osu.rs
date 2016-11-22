@@ -1,6 +1,6 @@
 use serde_json::Value;
 use ::error::{Error, Result};
-use ::utils::{decode_array, into_map, into_string, opt, remove};
+use ::utils::{decode_array, into_map, into_string, into_i64, opt, remove};
 
 pub enum Approval {
     Approved,
@@ -124,30 +124,30 @@ pub struct Beatmap {
     pub approved: Approval,
     pub approved_date: Option<String>,
     pub artist: String,
-    pub beatmap_id: u64,
-    pub beatmapset_id: u64,
+    pub beatmap_id: i64,
+    pub beatmapset_id: i64,
     pub bpm: f64,
     pub creator: String,
     pub difficulty_rating: f64,
-    pub diff_size: u64,
-    pub diff_overall: u64,
-    pub diff_approach: u64,
-    pub diff_drain: u64,
-    pub favourite_count: u64,
+    pub diff_size: f64,
+    pub diff_overall: f64,
+    pub diff_approach: f64,
+    pub diff_drain: f64,
+    pub favourite_count: i64,
     pub file_md5: String,
     pub genre_id: Genre,
-    pub hit_length: u64,
+    pub hit_length: i64,
     pub language_id: Language,
     pub last_update: String,
-    pub max_combo: u64,
-    pub mode: u64,
-    pub pass_count: u64,
-    pub play_count: u64,
+    pub max_combo: Option<i64>,
+    pub mode: i64,
+    pub pass_count: i64,
+    pub play_count: i64,
     pub source: String,
     /// A list of tags, separated by spaces.
     pub tags: String,
     pub title: String,
-    pub total_length: u64,
+    pub total_length: i64,
     pub version: String,
 }
 
@@ -165,17 +165,17 @@ impl Beatmap {
             bpm: field!(map, float, "bpm"),
             creator: field!(map, R, "creator", into_string),
             difficulty_rating: field!(map, float, "difficultyrating"),
-            diff_size: field!(map, int, "diff_size"),
-            diff_overall: field!(map, int, "diff_overall"),
-            diff_approach: field!(map, int, "diff_approach"),
-            diff_drain: field!(map, int, "diff_drain"),
+            diff_approach: field!(map, float, "diff_approach"),
+            diff_drain: field!(map, float, "diff_drain"),
+            diff_overall: field!(map, float, "diff_overall"),
+            diff_size: field!(map, float, "diff_size"),
             favourite_count: field!(map, int, "favourite_count"),
             file_md5: field!(map, R, "file_md5", into_string),
             genre_id: field!(map, R, "genre_id", Genre::decode),
             hit_length: field!(map, int, "hit_length"),
             language_id: field!(map, R, "language_id", Language::decode),
             last_update: field!(map, R, "last_update", into_string),
-            max_combo: field!(map, int, "maxcombo"),
+            max_combo: field!(map, O, int, "max_combo"),
             mode: field!(map, int, "mode"),
             pass_count: field!(map, int, "passcount"),
             play_count: field!(map, int, "playcount"),
@@ -189,10 +189,10 @@ impl Beatmap {
 }
 
 pub struct Game {
-    pub beatmap_id: u64,
+    pub beatmap_id: i64,
     pub end_time: String,
-    pub game_id: u64,
-    pub match_type: u64,
+    pub game_id: i64,
+    pub match_type: i64,
     pub mods: Mods,
     pub play_mode: PlayMode,
     pub scores: Vec<GameScore>,
@@ -222,20 +222,20 @@ impl Game {
 }
 
 pub struct GameScore {
-    pub count_100: u64,
-    pub count_300: u64,
-    pub count_50: u64,
-    pub count_geki: u64,
-    pub count_katu: u64,
-    pub count_miss: u64,
+    pub count_100: i64,
+    pub count_300: i64,
+    pub count_50: i64,
+    pub count_geki: i64,
+    pub count_katu: i64,
+    pub count_miss: i64,
     pub date: String,
     pub enabled_mods: Mods,
-    pub max_combo: u64,
-    pub perfect: u64,
+    pub max_combo: i64,
+    pub perfect: i64,
     pub pp: f64,
     pub rank: String,
-    pub score: u64,
-    pub user_id: u64,
+    pub score: i64,
+    pub user_id: i64,
     pub username: String,
 }
 
@@ -266,7 +266,7 @@ impl GameScore {
 
 pub struct Match {
     pub end_time: Option<String>,
-    pub match_id: u64,
+    pub match_id: i64,
     pub name: String,
     pub start_time: String,
 }
@@ -286,21 +286,21 @@ impl Match {
 }
 
 pub struct MatchScore {
-    pub count_100: u64,
-    pub count_300: u64,
-    pub count_50: u64,
-    pub count_geki: u64,
-    pub count_katu: u64,
-    pub count_miss: u64,
-    pub max_combo: u64,
-    pub pass: u64,
-    pub perfect: u64,
+    pub count_100: i64,
+    pub count_300: i64,
+    pub count_50: i64,
+    pub count_geki: i64,
+    pub count_katu: i64,
+    pub count_miss: i64,
+    pub max_combo: i64,
+    pub pass: i64,
+    pub perfect: i64,
     // Not used. Always 0.
-    pub rank: u64,
-    pub score: u64,
-    pub slot: u64,
-    pub team: u64,
-    pub user_id: u64,
+    pub rank: i64,
+    pub score: i64,
+    pub slot: i64,
+    pub team: i64,
+    pub user_id: i64,
 }
 
 impl MatchScore {
@@ -328,21 +328,21 @@ impl MatchScore {
 }
 
 pub struct Performance {
-    pub beatmap_id: u64,
-    pub count_100: u64,
-    pub count_300: u64,
-    pub count_50: u64,
-    pub count_geki: u64,
-    pub count_katu: u64,
-    pub count_miss: u64,
+    pub beatmap_id: i64,
+    pub count_100: i64,
+    pub count_300: i64,
+    pub count_50: i64,
+    pub count_geki: i64,
+    pub count_katu: i64,
+    pub count_miss: i64,
     pub date: String,
     pub enabled_mods: Mods,
-    pub max_combo: u64,
+    pub max_combo: i64,
     pub perfect: bool,
     pub pp: f64,
     pub rank: String,
-    pub score: u64,
-    pub user_id: u64,
+    pub score: i64,
+    pub user_id: i64,
 }
 
 impl Performance {
@@ -371,20 +371,20 @@ impl Performance {
 }
 
 pub struct RecentPlay {
-    pub beatmap_id: u64,
-    pub count_100: u64,
-    pub count_300: u64,
-    pub count_50: u64,
-    pub count_geki: u64,
-    pub count_katu: u64,
-    pub count_miss: u64,
+    pub beatmap_id: i64,
+    pub count_100: i64,
+    pub count_300: i64,
+    pub count_50: i64,
+    pub count_geki: i64,
+    pub count_katu: i64,
+    pub count_miss: i64,
     pub date: String,
     pub enabled_mods: Mods,
-    pub max_combo: u64,
+    pub max_combo: i64,
     pub perfect: bool,
     pub rank: String,
-    pub score: u64,
-    pub user_id: u64,
+    pub score: i64,
+    pub user_id: i64,
 }
 
 impl RecentPlay {
@@ -412,23 +412,23 @@ impl RecentPlay {
 }
 
 pub struct User {
-    pub id: u64,
+    pub id: i64,
     pub accuracy: f64,
-    pub count_100: u64,
-    pub count_300: u64,
-    pub count_50: u64,
-    pub count_rank_a: u64,
-    pub count_rank_s: u64,
-    pub count_rank_ss: u64,
+    pub count_100: i64,
+    pub count_300: i64,
+    pub count_50: i64,
+    pub count_rank_a: i64,
+    pub count_rank_s: i64,
+    pub count_rank_ss: i64,
     pub country: String,
     pub events: Vec<UserEvent>,
     pub level: f64,
-    pub play_count: u64,
-    pub pp_country_rank: u64,
-    pub pp_rank: u64,
-    pub pp_raw: u64,
-    pub ranked_score: u64,
-    pub total_score: u64,
+    pub play_count: i64,
+    pub pp_country_rank: i64,
+    pub pp_rank: i64,
+    pub pp_raw: f64,
+    pub ranked_score: i64,
+    pub total_score: i64,
     pub username: String,
 }
 
@@ -452,7 +452,7 @@ impl User {
             play_count: field!(map, int, "playcount"),
             pp_country_rank: field!(map, int, "pp_country_rank"),
             pp_rank: field!(map, int, "pp_rank"),
-            pp_raw: field!(map, int, "pp_raw"),
+            pp_raw: field!(map, float, "pp_raw"),
             ranked_score: field!(map, int, "ranked_score"),
             total_score: field!(map, int, "total_score"),
             username: field!(map, R, "username", into_string),
@@ -461,11 +461,11 @@ impl User {
 }
 
 pub struct UserEvent {
-    pub beatmap_id: u64,
-    pub beatmapset_id: u64,
+    pub beatmap_id: i64,
+    pub beatmapset_id: i64,
     pub date: String,
     pub display_html: String,
-    pub epic_factor: u64,
+    pub epic_factor: i64,
 }
 
 impl UserEvent {
@@ -477,14 +477,14 @@ impl UserEvent {
             beatmap_id: field!(map, int, "beatmap_id"),
             beatmapset_id: field!(map, int, "beatmapset_id"),
             date: field!(map, R, "date", into_string),
-            display_html: field!(map, R, "date", into_string),
+            display_html: field!(map, R, "display_html", into_string),
             epic_factor: field!(map, int, "epicfactor"),
         })
     }
 }
 
 bitflags! {
-    pub flags Mods: u64 {
+    pub flags Mods: i64 {
         const NONE = 0,
         const NO_FAIL = 1 << 0,
         const EASY = 1 << 1,
@@ -527,9 +527,9 @@ impl Mods {
     #[doc(hidden)]
     pub fn decode(value: Value) -> Result<Mods> {
         let num = match value {
-            Value::I64(v) => v as u64,
-            Value::U64(v) => v,
-            Value::String(v) => try!(v.parse::<u64>().map_err(Error::from)),
+            Value::I64(v) => v,
+            Value::U64(v) => v as i64,
+            Value::String(v) => try!(v.parse::<i64>().map_err(Error::from)),
             other => panic!("Unexpected mods: {:?}", other),
         };
 
