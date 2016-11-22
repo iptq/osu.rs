@@ -35,14 +35,14 @@ pub fn get_scores<F>(key: &str, beatmap_id: u64, f: F) -> Result<Vec<GameScore>>
     decode_array(try!(serde_json::from_reader(response)), GameScore::decode)
 }
 
-pub fn get_user<F, U>(key: &str, user: U, f: F) -> Result<User>
+pub fn get_user<F, U>(key: &str, user: U, f: F) -> Result<Vec<User>>
     where F: FnOnce(GetUserRequest) -> GetUserRequest, U: Into<GetBeatmapUser> {
     let params = params(f(GetUserRequest::default()).user(user.into()).0);
     let response = try!(Client::new()
         .get(&format!("{}/get_user?k={}{}", API_URL, key, params))
         .send());
 
-    User::decode(try!(serde_json::from_reader(response)))
+    decode_array(try!(serde_json::from_reader(response)), User::decode)
 }
 
 pub fn get_user_best<F, U>(key: &str, user: U, f: F) -> Result<Vec<Performance>>
@@ -78,4 +78,22 @@ fn params(map: BTreeMap<&str, String>) -> String {
     }
 
     uri
+}
+
+#[cfg(test)]
+mod tests {
+    use std::env;
+    use super::*;
+
+    #[test]
+    fn tests() {
+        let key = env::var("OSU_KEY").unwrap();
+        let u = "Cookiezi";
+
+        let _ = get_beatmaps(&key, |f| f).expect("get beatmaps");
+        let _ = get_scores(&key, 191904, |f| f).expect("get scores");
+        let _ = get_user(&key, u, |f| f).expect("get user");
+        let _ = get_user_best(&key, u, |f| f).expect("get user best");
+        let _ = get_user_recent(&key, u, |f| f).expect("get user recent");
+    }
 }

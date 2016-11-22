@@ -14,13 +14,11 @@ macro_rules! field {
             _ => Err(Error::Other("Expected valid f64")),
         })
     };
+    ($map:expr, O, int, $key:expr) => {
+        try!(opt(&mut $map, $key, into_i64))
+    };
     ($map:expr, int, $key:expr) => {
-        try!(match remove(&mut $map, $key) {
-            Ok(Value::I64(v)) => Ok(v as u64),
-            Ok(Value::U64(v)) => Ok(v),
-            Ok(Value::String(v)) => v.parse::<u64>().map_err(Error::from),
-            _ => Err(Error::Other("Expected valid u64")),
-        })
+        try!(remove(&mut $map, $key).and_then(into_i64))
     };
     ($map:expr, O, $key:expr, $decode:path) => {
         try!(opt(&mut $map, $key, $decode))
@@ -85,6 +83,15 @@ pub fn into_string(value: Value) -> Result<String> {
     match value {
         Value::String(s) => Ok(s),
         value => Err(Error::Decode("Expected string", value)),
+    }
+}
+
+pub fn into_i64(value: Value) -> Result<i64> {
+    match value {
+        Value::I64(v) => Ok(v),
+        Value::U64(v) => Ok(v as i64),
+        Value::String(v) => v.parse::<i64>().map_err(Error::from),
+        other => Err(Error::Decode("Expected valid i64", other)),
     }
 }
 

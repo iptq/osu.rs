@@ -15,8 +15,8 @@ pub enum Error {
     Json(JsonError),
     /// A `std::io` module error
     Io(IoError),
-    ParseFloat,
-    ParseInt,
+    ParseFloat(ParseFloatError),
+    ParseInt(ParseIntError),
     /// A json decoding error, with a description and the offending value
     Decode(&'static str, Value),
     /// A miscellaneous error, with a description
@@ -42,14 +42,14 @@ impl From<JsonError> for Error {
 }
 
 impl From<ParseFloatError> for Error {
-    fn from(_err: ParseFloatError) -> Error {
-        Error::ParseFloat
+    fn from(err: ParseFloatError) -> Error {
+        Error::ParseFloat(err)
     }
 }
 
 impl From<ParseIntError> for Error {
-    fn from(_err: ParseIntError) -> Error {
-        Error::ParseInt
+    fn from(err: ParseIntError) -> Error {
+        Error::ParseInt(err)
     }
 }
 
@@ -70,8 +70,8 @@ impl StdError for Error {
             Error::Hyper(ref inner) => inner.description(),
             Error::Json(ref inner) => inner.description(),
             Error::Io(ref inner) => inner.description(),
-            Error::ParseFloat => "Error parsing float",
-            Error::ParseInt => "Error parseing int",
+            Error::ParseFloat(ref inner) => inner.description(),
+            Error::ParseInt(ref inner) => inner.description(),
             Error::Decode(msg, _) | Error::Other(msg) => msg,
         }
     }
