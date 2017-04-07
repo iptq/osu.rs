@@ -1,3 +1,4 @@
+use serde_json;
 use std::collections::BTreeMap;
 use super::GetBeatmapUser;
 use ::model::*;
@@ -62,7 +63,9 @@ impl<'a> GetBeatmapsRequest<'a> {
     }
 
     pub fn mode(mut self, mode: PlayMode) -> Self {
-        self.0.insert("m", mode.name().to_string());
+        if let Ok(mode) = serde_json::to_string(&mode) {
+            self.0.insert("m", mode);
+        }
 
         GetBeatmapsRequest(self.0)
     }
@@ -105,7 +108,9 @@ impl<'a> GetScoreRequest<'a> {
     }
 
     pub fn mode(mut self, mode: PlayMode) -> Self {
-        self.0.insert("m", mode.name().to_string());
+        if let Ok(mode) = serde_json::to_string(&mode) {
+            self.0.insert("m", mode);
+        }
 
         GetScoreRequest(self.0)
     }
@@ -147,7 +152,9 @@ impl<'a> GetUserBestRequest<'a> {
     }
 
     pub fn mode(mut self, mode: PlayMode) -> Self {
-        self.0.insert("m", mode.name().to_string());
+        if let Ok(mode) = serde_json::to_string(&mode) {
+            self.0.insert("m", mode);
+        }
 
         GetUserBestRequest(self.0)
     }
@@ -184,7 +191,9 @@ impl<'a> GetUserRecentRequest<'a> {
     }
 
     pub fn mode(mut self, mode: PlayMode) -> Self {
-        self.0.insert("m", mode.name().to_string());
+        if let Ok(mode) = serde_json::to_string(&mode) {
+            self.0.insert("m", mode);
+        }
 
         GetUserRecentRequest(self.0)
     }
@@ -221,7 +230,9 @@ impl<'a> GetUserRequest<'a> {
     }
 
     pub fn mode(mut self, mode: PlayMode) -> Self {
-        self.0.insert("m", mode.name().to_string());
+        if let Ok(mode) = serde_json::to_string(&mode) {
+            self.0.insert("m", mode);
+        }
 
         GetUserRequest(self.0)
     }

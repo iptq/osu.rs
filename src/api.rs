@@ -1,70 +1,67 @@
-use hyper::Client;
+use hyper::client::{Client, Response as HyperResponse};
 use serde_json;
 use std::collections::BTreeMap;
 use super::{API_URL, GetBeatmapUser};
 use ::builder::*;
 use ::error::Result;
 use ::model::*;
-use ::utils::decode_array;
 
 pub fn get_beatmaps<F>(key: &str, f: F) -> Result<Vec<Beatmap>>
     where F: FnOnce(GetBeatmapsRequest) -> GetBeatmapsRequest {
     let params = params(f(GetBeatmapsRequest::default()).0);
-    let response = try!(Client::new()
+    let response = Client::new()
         .get(&format!("{}/get_beatmaps?k={}{}", API_URL, key, params))
-        .send());
+        .send()?;
 
-    decode_array(try!(serde_json::from_reader(response)), Beatmap::decode)
+    serde_json::from_reader::<HyperResponse, Vec<Beatmap>>(response).map_err(From::from)
 }
 
 pub fn get_match(key: &str, match_id: u64) -> Result<Match> {
-    let response = try!(Client::new()
+    let response = Client::new()
         .get(&format!("{}/get_match?k={}&mp={}", API_URL, key, match_id))
-        .send());
+        .send()?;
 
-    Match::decode(try!(serde_json::from_reader(response)))
+    serde_json::from_reader::<HyperResponse, Match>(response).map_err(From::from)
 }
 
 pub fn get_scores<F>(key: &str, beatmap_id: u64, f: F) -> Result<Vec<GameScore>>
     where F: FnOnce(GetScoreRequest) -> GetScoreRequest {
     let params = params(f(GetScoreRequest::default()).0);
-    let response = try!(Client::new()
+    let response = Client::new()
         .get(&format!("{}/get_scores?k={}&b={}{}", API_URL, key, beatmap_id, params))
-        .send());
+        .send()?;
 
-    decode_array(try!(serde_json::from_reader(response)), GameScore::decode)
+    serde_json::from_reader::<HyperResponse, Vec<GameScore>>(response).map_err(From::from)
 }
 
 pub fn get_user<F, U>(key: &str, user: U, f: F) -> Result<Vec<User>>
     where F: FnOnce(GetUserRequest) -> GetUserRequest, U: Into<GetBeatmapUser> {
     let params = params(f(GetUserRequest::default()).user(user.into()).0);
-    let response = try!(Client::new()
+    let response = Client::new()
         .get(&format!("{}/get_user?k={}{}", API_URL, key, params))
-        .send());
+        .send()?;
 
-    decode_array(try!(serde_json::from_reader(response)), User::decode)
+    serde_json::from_reader::<HyperResponse, Vec<User>>(response).map_err(From::from)
 }
 
 pub fn get_user_best<F, U>(key: &str, user: U, f: F) -> Result<Vec<Performance>>
-    where F: FnOnce(GetUserBestRequest) -> GetUserBestRequest,
-          U: Into<GetBeatmapUser> {
+    where F: FnOnce(GetUserBestRequest) -> GetUserBestRequest, U: Into<GetBeatmapUser> {
     let params = params(f(GetUserBestRequest::default()).user(user.into()).0);
-    let response = try!(Client::new()
+    let response = Client::new()
         .get(&format!("{}/get_user_best?k={}{}", API_URL, key, params))
-        .send());
+        .send()?;
 
-    decode_array(try!(serde_json::from_reader(response)), Performance::decode)
+    serde_json::from_reader::<HyperResponse, Vec<Performance>>(response).map_err(From::from)
 }
 
 pub fn get_user_recent<F, U>(key: &str, user: U, f: F) -> Result<Vec<RecentPlay>>
-    where F: FnOnce(GetUserRecentRequest) -> GetUserRecentRequest,
-          U: Into<GetBeatmapUser> {
+    where F: FnOnce(GetUserRecentRequest) -> GetUserRecentRequest, U: Into<GetBeatmapUser> {
     let params = params(f(GetUserRecentRequest::default()).user(user.into()).0);
-    let response = try!(Client::new()
+    let response = Client::new()
         .get(&format!("{}/get_user_recent?k={}{}", API_URL, key, params))
-        .send());
+        .send()?;
 
-    decode_array(try!(serde_json::from_reader(response)), RecentPlay::decode)
+    serde_json::from_reader::<HyperResponse, Vec<RecentPlay>>(response).map_err(From::from)
 }
 
 fn params(map: BTreeMap<&str, String>) -> String {
