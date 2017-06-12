@@ -269,6 +269,7 @@ pub struct RecentPlay {
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct User {
+    #[serde(rename="user_id")]
     pub id: i64,
     pub accuracy: f64,
     #[serde(rename="count100")]
