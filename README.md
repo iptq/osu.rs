@@ -26,7 +26,7 @@ License info in [LICENSE.md]. Long story short, ISC.
 
 [ci]: https://travis-ci.org/zeyla/osu.rs
 [ci-badge]: https://travis-ci.org/zeyla/osu.rs.svg?branch=master
-[docs]: https://docs.austinhellyer.me/osu/
+[docs]: https://docs.rs/osu
 [docs-badge]: https://img.shields.io/badge/docs-online-2020ff.svg
 [LICENSE.md]: https://github.com/zeyla/osu.rs/blob/master/LICENSE.md
 [license]: https://opensource.org/licenses/ISC
