@@ -1,11 +1,13 @@
 #[macro_use] extern crate bitflags;
 #[macro_use] extern crate serde_derive;
 
+#[cfg(feature="hyper")]
 extern crate hyper;
+
 extern crate serde;
 extern crate serde_json;
 
-const API_URL: &'static str = "https://osu.ppy.sh/api";
+pub const API_URL: &'static str = "https://osu.ppy.sh/api";
 
 pub mod builder;
 pub mod error;
