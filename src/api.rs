@@ -27,7 +27,7 @@ trait OsuRequester {
 
 #[cfg(feature="hyper")]
 mod hyper_support {
-    use hyper::client::{Client, Response as HyperResponse};
+    use hyper::Client;
     use serde_json;
     use std::fmt::Write;
     use super::OsuRequester;
@@ -46,7 +46,7 @@ mod hyper_support {
 
             let response = self.get(&uri).send()?;
 
-            serde_json::from_reader::<HyperResponse, Vec<Beatmap>>(response).map_err(From::from)
+            serde_json::from_reader(response).map_err(From::from)
         }
 
         fn get_match(&self, key: &str, match_id: u64) -> Result<Match> {
@@ -58,7 +58,7 @@ mod hyper_support {
 
             let response = self.get(&uri).send()?;
 
-            serde_json::from_reader::<HyperResponse, Match>(response).map_err(From::from)
+            serde_json::from_reader(response).map_err(From::from)
         }
 
         fn get_scores<F>(&self, key: &str, beatmap_id: u64, f: F) -> Result<Vec<GameScore>>
@@ -73,7 +73,7 @@ mod hyper_support {
 
             let response = self.get(&uri).send()?;
 
-            serde_json::from_reader::<HyperResponse, Vec<GameScore>>(response).map_err(From::from)
+            serde_json::from_reader(response).map_err(From::from)
         }
 
         fn get_user<F, U>(&self, key: &str, user: U, f: F) -> Result<Vec<User>>
@@ -87,7 +87,7 @@ mod hyper_support {
 
             let response = self.get(&uri).send()?;
 
-            serde_json::from_reader::<HyperResponse, Vec<User>>(response).map_err(From::from)
+            serde_json::from_reader(response).map_err(From::from)
         }
 
         fn get_user_best<F, U>(&self, key: &str, user: U, f: F) -> Result<Vec<Performance>>
@@ -101,7 +101,7 @@ mod hyper_support {
 
             let response = self.get(&uri).send()?;
 
-            serde_json::from_reader::<HyperResponse, Vec<Performance>>(response).map_err(From::from)
+            serde_json::from_reader(response).map_err(From::from)
         }
 
         fn get_user_recent<F, U>(&self, key: &str, user: U, f: F) -> Result<Vec<RecentPlay>>
@@ -115,7 +115,7 @@ mod hyper_support {
 
             let response = self.get(&uri).send()?;
 
-            serde_json::from_reader::<HyperResponse, Vec<RecentPlay>>(response).map_err(From::from)
+            serde_json::from_reader(response).map_err(From::from)
         }
     }
 }

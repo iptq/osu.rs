@@ -1,13 +1,14 @@
 use serde_json::{Error as JsonError, Value};
 use std::io::Error as IoError;
 use std::error::Error as StdError;
-use std::fmt::{Display, Error as FmtError};
+use std::fmt::{Display, Error as FmtError, Formatter, Result as FmtResult};
 use std::num::{ParseFloatError, ParseIntError};
+use std::result::Result as StdResult;
 
 #[cfg(feature="hyper")]
 use hyper::Error as HyperError;
 
-pub type Result<T> = ::std::result::Result<T, Error>;
+pub type Result<T> = StdResult<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
@@ -66,7 +67,7 @@ impl From<ParseIntError> for Error {
 }
 
 impl Display for Error {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter) -> FmtResult {
         f.write_str(self.description())
     }
 }
