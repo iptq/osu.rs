@@ -303,47 +303,47 @@ pub struct UserEvent {
 }
 
 bitflags! {
-    pub flags Mods: i64 {
-        const NONE = 0,
-        const NO_FAIL = 1,
-        const EASY = 1 << 1,
-        const NO_VIDEO = 1 << 2,
-        const HIDDEN = 1 << 3,
-        const HARD_ROCK = 1 << 4,
-        const SUDDEN_DEATH = 1 << 5,
-        const DOUBLE_TIME = 1 << 6,
-        const RELAX = 1 << 7,
-        const HALF_TIME = 1 << 8,
+    pub struct Mods: i64 {
+        const NONE = 0;
+        const NO_FAIL = 1;
+        const EASY = 1 << 1;
+        const NO_VIDEO = 1 << 2;
+        const HIDDEN = 1 << 3;
+        const HARD_ROCK = 1 << 4;
+        const SUDDEN_DEATH = 1 << 5;
+        const DOUBLE_TIME = 1 << 6;
+        const RELAX = 1 << 7;
+        const HALF_TIME = 1 << 8;
         /// Only set along with [`DOUBLE_TIME`]. i.e.: NC only gives 576
         ///
         /// [`DOUBLE_TIME`]: constant.DOUBLE_TIME.html
-        const NIGHTCORE = 1 << 9,
-        const FLASHLIGHT = 1 << 10,
-        const AUTOPLAY = 1 << 11,
-        const SPUN_OUT = 1 << 12,
+        const NIGHTCORE = 1 << 9;
+        const FLASHLIGHT = 1 << 10;
+        const AUTOPLAY = 1 << 11;
+        const SPUN_OUT = 1 << 12;
         /// Could be "Autopilot".
-        const RELAX2 = 1 << 13,
-        const PERFECT = 1 << 14,
-        const KEY4 = 1 << 15,
-        const KEY5 = 1 << 16,
-        const KEY6 = 1 << 17,
-        const KEY7 = 1 << 18,
-        const KEY8 = 1 << 19,
-        const KEY_MOD = 1015808,
-        const FADE_IN = 1 << 20,
-        const RANDOM = 1 << 21,
-        const LAST_MOD = 1 << 22,
-        const FREE_MOD_ALLOWED = 2069691,
-        const KEY9 = 1 << 24,
-        const KEY10 = 1 << 25,
-        const KEY1 = 1 << 26,
-        const KEY2 = 1 << 27,
-        const KEY3 = 1 << 28,
+        const RELAX2 = 1 << 13;
+        const PERFECT = 1 << 14;
+        const KEY4 = 1 << 15;
+        const KEY5 = 1 << 16;
+        const KEY6 = 1 << 17;
+        const KEY7 = 1 << 18;
+        const KEY8 = 1 << 19;
+        const KEY_MOD = 1015808;
+        const FADE_IN = 1 << 20;
+        const RANDOM = 1 << 21;
+        const LAST_MOD = 1 << 22;
+        const FREE_MOD_ALLOWED = 2069691;
+        const KEY9 = 1 << 24;
+        const KEY10 = 1 << 25;
+        const KEY1 = 1 << 26;
+        const KEY2 = 1 << 27;
+        const KEY3 = 1 << 28;
     }
 }
 
-impl Deserialize for Mods {
-    fn deserialize<D: Deserializer>(deserializer: D) -> StdResult<Self, D::Error> {
+impl<'de> Deserialize<'de> for Mods {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> StdResult<Self, D::Error> {
         Ok(Mods::from_bits_truncate(i64::deserialize(deserializer)?))
     }
 }
