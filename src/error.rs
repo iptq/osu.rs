@@ -1,9 +1,11 @@
-use hyper::Error as HyperError;
 use serde_json::{Error as JsonError, Value};
 use std::io::Error as IoError;
 use std::error::Error as StdError;
 use std::fmt::{Display, Error as FmtError};
 use std::num::{ParseFloatError, ParseIntError};
+
+#[cfg(feature="hyper")]
+use hyper::Error as HyperError;
 
 pub type Result<T> = ::std::result::Result<T, Error>;
 
@@ -12,6 +14,7 @@ pub enum Error {
     /// An error from `std::fmt`
     Format(FmtError),
     /// A `hyper` crate error
+    #[cfg(feature="hyper")]
     Hyper(HyperError),
     /// A `serde_json` crate error
     Json(JsonError),
@@ -37,6 +40,7 @@ impl From<IoError> for Error {
     }
 }
 
+#[cfg(feature="hyper")]
 impl From<HyperError> for Error {
     fn from(err: HyperError) -> Error {
         Error::Hyper(err)
@@ -71,12 +75,13 @@ impl StdError for Error {
     fn description(&self) -> &str {
         match *self {
             Error::Format(ref inner) => inner.description(),
-            Error::Hyper(ref inner) => inner.description(),
             Error::Json(ref inner) => inner.description(),
             Error::Io(ref inner) => inner.description(),
             Error::ParseFloat(ref inner) => inner.description(),
             Error::ParseInt(ref inner) => inner.description(),
             Error::Decode(msg, _) | Error::Other(msg) => msg,
+            #[cfg(feature="hyper")]
+            Error::Hyper(ref inner) => inner.description(),
         }
     }
 }
