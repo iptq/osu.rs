@@ -6,7 +6,7 @@ use ::model::*;
 #[cfg(any(feature="hyper"))]
 use std::collections::BTreeMap;
 
-trait OsuRequester {
+pub trait OsuRequester {
     fn get_beatmaps<F>(&self, key: &str, f: F) -> Result<Vec<Beatmap>>
         where F: FnOnce(GetBeatmapsRequest) -> GetBeatmapsRequest;
 
@@ -133,23 +133,5 @@ fn mutate_uri(uri: &mut String, map: BTreeMap<&str, String>) {
             let uri_bytes = uri.as_mut_vec();
             uri_bytes.extend(value_bytes);
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use std::env;
-    use super::*;
-
-    #[test]
-    fn tests() {
-        let key = env::var("OSU_KEY").unwrap();
-        let u = "Cookiezi";
-
-        let _ = get_beatmaps(&key, |f| f).expect("get beatmaps");
-        let _ = get_scores(&key, 191904, |f| f).expect("get scores");
-        let _ = get_user(&key, u, |f| f).expect("get user");
-        let _ = get_user_best(&key, u, |f| f).expect("get user best");
-        let _ = get_user_recent(&key, u, |f| f).expect("get user recent");
     }
 }
