@@ -148,7 +148,7 @@ impl<'a> GetScoreRequest<'a> {
     ///
     /// # Examples
     ///
-    /// Filter beatmap score results by , limiting by 5 results:
+    /// Filter beatmap score results by [`EASY`], limiting by 5 results:
     ///
     /// ```rust,no_run
     /// # extern crate hyper;
@@ -165,7 +165,7 @@ impl<'a> GetScoreRequest<'a> {
     ///
     /// let _ = client.get_scores(osu_key, beatmap_id, |f| f
     ///     .limit(5)
-    ///     .mods(1))?;
+    ///     .mods(osu::EASY))?;
     /// #
     /// #     Ok(())
     /// # }
@@ -174,6 +174,8 @@ impl<'a> GetScoreRequest<'a> {
     /// #     try_main().unwrap();
     /// # }
     /// ```
+    ///
+    /// [`EASY`]: ../constant.EASY.html
     pub fn mods(mut self, mods: Mods) -> Self {
         self.0.insert("mods", mods.bits().to_string());
 

@@ -6,7 +6,7 @@ use ::model::*;
 #[cfg(any(feature="hyper"))]
 use std::collections::BTreeMap;
 
-/// A trait used for
+/// A trait used for implementation on various HTTP clients.
 pub trait OsuRequester {
     /// Retrieves filtered beatmap results.
     ///
