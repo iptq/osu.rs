@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use serde::de::{Deserialize, Deserializer, Error as DeError};
 use std::fmt::Display;
 use std::result::Result as StdResult;
