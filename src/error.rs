@@ -1,15 +1,27 @@
+//! The error and result types returned by the library.
+//!
+//! All library functions return a [`Result`], which has an `Err` type of
+//! [`Error`].
+//!
+//! [`Error`]: enum.Error.html
+//! [`Result`]: type.Result.html
+
 use serde_json::{Error as JsonError, Value};
 use std::io::Error as IoError;
 use std::error::Error as StdError;
 use std::fmt::{Display, Error as FmtError, Formatter, Result as FmtResult};
-use std::num::{ParseFloatError, ParseIntError};
 use std::result::Result as StdResult;
 
 #[cfg(feature="hyper")]
 use hyper::Error as HyperError;
 
+/// The result type used throughout the library.
 pub type Result<T> = StdResult<T, Error>;
 
+/// The error type used throughout the library.
+///
+/// This wraps all of the depended crates' error types and stdlib error types
+/// that can return from functions.
 #[derive(Debug)]
 pub enum Error {
     /// An error from `std::fmt`
@@ -21,8 +33,6 @@ pub enum Error {
     Json(JsonError),
     /// A `std::io` module error
     Io(IoError),
-    ParseFloat(ParseFloatError),
-    ParseInt(ParseIntError),
     /// A json decoding error, with a description and the offending value
     Decode(&'static str, Value),
     /// A miscellaneous error, with a description
@@ -54,18 +64,6 @@ impl From<JsonError> for Error {
     }
 }
 
-impl From<ParseFloatError> for Error {
-    fn from(err: ParseFloatError) -> Error {
-        Error::ParseFloat(err)
-    }
-}
-
-impl From<ParseIntError> for Error {
-    fn from(err: ParseIntError) -> Error {
-        Error::ParseInt(err)
-    }
-}
-
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         f.write_str(self.description())
@@ -78,8 +76,6 @@ impl StdError for Error {
             Error::Format(ref inner) => inner.description(),
             Error::Json(ref inner) => inner.description(),
             Error::Io(ref inner) => inner.description(),
-            Error::ParseFloat(ref inner) => inner.description(),
-            Error::ParseInt(ref inner) => inner.description(),
             Error::Decode(msg, _) | Error::Other(msg) => msg,
             #[cfg(feature="hyper")]
             Error::Hyper(ref inner) => inner.description(),
