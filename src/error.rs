@@ -6,7 +6,7 @@
 //! [`Error`]: enum.Error.html
 //! [`Result`]: type.Result.html
 
-use serde_json::{Error as JsonError, Value};
+use serde_json::Error as JsonError;
 use std::io::Error as IoError;
 use std::error::Error as StdError;
 use std::fmt::{Display, Error as FmtError, Formatter, Result as FmtResult};
