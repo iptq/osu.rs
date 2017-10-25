@@ -21,7 +21,7 @@
 //! # fn main() {
 //! #     try_main().unwrap();
 //! # }
-#![deny(missing_docs)]
+// TODO: #![deny(missing_docs)]
 
 #[macro_use] extern crate bitflags;
 #[macro_use] extern crate serde_derive;
@@ -38,13 +38,12 @@ extern crate serde_json;
 /// any extra purposes that might be needed.
 pub const API_URL: &'static str = "https://osu.ppy.sh/api";
 
+pub mod bridge;
 pub mod builder;
 pub mod error;
 
-mod api;
 mod model;
 
-pub use api::*;
 pub use error::{Error, Result};
 pub use model::*;
 

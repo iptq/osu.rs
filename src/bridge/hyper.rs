@@ -1,13 +1,12 @@
-use super::GetBeatmapUser;
-use ::builder::*;
-use ::error::Result;
-use ::model::*;
-
-#[cfg(any(feature="hyper"))]
+use hyper::Client;
+use serde_json;
 use std::collections::BTreeMap;
+use std::fmt::Write;
+use ::builder::*;
+use ::*;
 
 /// A trait used for implementation on various HTTP clients.
-pub trait OsuRequester {
+pub trait OsuHyperRequester {
     /// Retrieves filtered beatmap results.
     ///
     /// # Examples
@@ -20,7 +19,7 @@ pub trait OsuRequester {
     /// #
     /// # fn try_main() -> Result<(), Box<Error>> {
     /// use hyper::Client;
-    /// use osu::OsuRequester;
+    /// use osu::OsuHyperRequester;
     /// use std::env;
     ///
     /// let osu_key = env::var("OSU_KEY")?;
@@ -52,7 +51,7 @@ pub trait OsuRequester {
     /// #
     /// # fn try_main() -> Result<(), Box<Error>> {
     /// use hyper::Client;
-    /// use osu::OsuRequester;
+    /// use osu::OsuHyperRequester;
     /// use std::env;
     ///
     /// let osu_key = env::var("OSU_KEY")?;
@@ -81,7 +80,7 @@ pub trait OsuRequester {
     /// #
     /// # fn try_main() -> Result<(), Box<Error>> {
     /// use hyper::Client;
-    /// use osu::OsuRequester;
+    /// use osu::OsuHyperRequester;
     /// use std::env;
     ///
     /// let osu_key = env::var("OSU_KEY")?;
@@ -112,7 +111,7 @@ pub trait OsuRequester {
     /// #
     /// # fn try_main() -> Result<(), Box<Error>> {
     /// use hyper::Client;
-    /// use osu::OsuRequester;
+    /// use osu::OsuHyperRequester;
     /// use std::env;
     ///
     /// let osu_key = env::var("OSU_KEY")?;
@@ -143,7 +142,7 @@ pub trait OsuRequester {
     /// #
     /// # fn try_main() -> Result<(), Box<Error>> {
     /// use hyper::Client;
-    /// use osu::OsuRequester;
+    /// use osu::OsuHyperRequester;
     /// use std::env;
     ///
     /// let osu_key = env::var("OSU_KEY")?;
@@ -174,7 +173,7 @@ pub trait OsuRequester {
     /// #
     /// # fn try_main() -> Result<(), Box<Error>> {
     /// use hyper::Client;
-    /// use osu::OsuRequester;
+    /// use osu::OsuHyperRequester;
     /// use std::env;
     ///
     /// let osu_key = env::var("OSU_KEY")?;
@@ -195,102 +194,91 @@ pub trait OsuRequester {
         where F: FnOnce(GetUserRecentRequest) -> GetUserRecentRequest, U: Into<GetBeatmapUser>;
 }
 
-#[cfg(feature="hyper")]
-mod hyper_support {
-    use hyper::Client;
-    use serde_json;
-    use std::fmt::Write;
-    use super::OsuRequester;
-    use ::builder::*;
-    use ::*;
+impl OsuHyperRequester for Client {
+    fn get_beatmaps<F>(&self, key: &str, f: F) -> Result<Vec<Beatmap>>
+        where F: FnOnce(GetBeatmapsRequest) -> GetBeatmapsRequest {
+        let mut uri = String::new();
+        uri.push_str(API_URL);
+        uri.push_str("/get_beatmaps?k=");
+        uri.push_str(key);
 
-    impl OsuRequester for Client {
-        fn get_beatmaps<F>(&self, key: &str, f: F) -> Result<Vec<Beatmap>>
-            where F: FnOnce(GetBeatmapsRequest) -> GetBeatmapsRequest {
-            let mut uri = String::new();
-            uri.push_str(API_URL);
-            uri.push_str("/get_beatmaps?k=");
-            uri.push_str(key);
+        mutate_uri(&mut uri, f(GetBeatmapsRequest::default()).0);
 
-            super::mutate_uri(&mut uri, f(GetBeatmapsRequest::default()).0);
+        let response = self.get(&uri).send()?;
 
-            let response = self.get(&uri).send()?;
+        serde_json::from_reader(response).map_err(From::from)
+    }
 
-            serde_json::from_reader(response).map_err(From::from)
-        }
+    fn get_match(&self, key: &str, match_id: u64) -> Result<Match> {
+        let mut uri = String::new();
+        uri.push_str(API_URL);
+        uri.push_str("/get_match?k=");
+        uri.push_str(key);
+        write!(uri, "&mp={}", match_id)?;
 
-        fn get_match(&self, key: &str, match_id: u64) -> Result<Match> {
-            let mut uri = String::new();
-            uri.push_str(API_URL);
-            uri.push_str("/get_match?k=");
-            uri.push_str(key);
-            write!(uri, "&mp={}", match_id)?;
+        let response = self.get(&uri).send()?;
 
-            let response = self.get(&uri).send()?;
+        serde_json::from_reader(response).map_err(From::from)
+    }
 
-            serde_json::from_reader(response).map_err(From::from)
-        }
+    fn get_scores<F>(&self, key: &str, beatmap_id: u64, f: F) -> Result<Vec<GameScore>>
+        where F: FnOnce(GetScoreRequest) -> GetScoreRequest {
+        let mut uri = String::new();
+        uri.push_str(API_URL);
+        uri.push_str("/get_scores?k=");
+        uri.push_str(key);
+        write!(uri, "&b={}", beatmap_id)?;
 
-        fn get_scores<F>(&self, key: &str, beatmap_id: u64, f: F) -> Result<Vec<GameScore>>
-            where F: FnOnce(GetScoreRequest) -> GetScoreRequest {
-            let mut uri = String::new();
-            uri.push_str(API_URL);
-            uri.push_str("/get_scores?k=");
-            uri.push_str(key);
-            write!(uri, "&b={}", beatmap_id)?;
+        mutate_uri(&mut uri, f(GetScoreRequest::default()).0);
 
-            super::mutate_uri(&mut uri, f(GetScoreRequest::default()).0);
+        let response = self.get(&uri).send()?;
 
-            let response = self.get(&uri).send()?;
+        serde_json::from_reader(response).map_err(From::from)
+    }
 
-            serde_json::from_reader(response).map_err(From::from)
-        }
+    fn get_user<F, U>(&self, key: &str, user: U, f: F) -> Result<Vec<User>>
+        where F: FnOnce(GetUserRequest) -> GetUserRequest, U: Into<GetBeatmapUser> {
+        let mut uri = String::new();
+        uri.push_str(API_URL);
+        uri.push_str("/get_user?k=");
+        uri.push_str(key);
 
-        fn get_user<F, U>(&self, key: &str, user: U, f: F) -> Result<Vec<User>>
-            where F: FnOnce(GetUserRequest) -> GetUserRequest, U: Into<GetBeatmapUser> {
-            let mut uri = String::new();
-            uri.push_str(API_URL);
-            uri.push_str("/get_user?k=");
-            uri.push_str(key);
+        mutate_uri(&mut uri, f(GetUserRequest::default()).user(user.into()).0);
 
-            super::mutate_uri(&mut uri, f(GetUserRequest::default()).user(user.into()).0);
+        let response = self.get(&uri).send()?;
 
-            let response = self.get(&uri).send()?;
+        serde_json::from_reader(response).map_err(From::from)
+    }
 
-            serde_json::from_reader(response).map_err(From::from)
-        }
+    fn get_user_best<F, U>(&self, key: &str, user: U, f: F) -> Result<Vec<Performance>>
+        where F: FnOnce(GetUserBestRequest) -> GetUserBestRequest, U: Into<GetBeatmapUser> {
+        let mut uri = String::new();
+        uri.push_str(API_URL);
+        uri.push_str("/get_user_best?k=");
+        uri.push_str(key);
 
-        fn get_user_best<F, U>(&self, key: &str, user: U, f: F) -> Result<Vec<Performance>>
-            where F: FnOnce(GetUserBestRequest) -> GetUserBestRequest, U: Into<GetBeatmapUser> {
-            let mut uri = String::new();
-            uri.push_str(API_URL);
-            uri.push_str("/get_user_best?k=");
-            uri.push_str(key);
+        mutate_uri(&mut uri, f(GetUserBestRequest::default()).user(user.into()).0);
 
-            super::mutate_uri(&mut uri, f(GetUserBestRequest::default()).user(user.into()).0);
+        let response = self.get(&uri).send()?;
 
-            let response = self.get(&uri).send()?;
+        serde_json::from_reader(response).map_err(From::from)
+    }
 
-            serde_json::from_reader(response).map_err(From::from)
-        }
+    fn get_user_recent<F, U>(&self, key: &str, user: U, f: F) -> Result<Vec<RecentPlay>>
+        where F: FnOnce(GetUserRecentRequest) -> GetUserRecentRequest, U: Into<GetBeatmapUser> {
+        let mut uri = String::new();
+        uri.push_str(API_URL);
+        uri.push_str("/get_user_recent?k=");
+        uri.push_str(key);
 
-        fn get_user_recent<F, U>(&self, key: &str, user: U, f: F) -> Result<Vec<RecentPlay>>
-            where F: FnOnce(GetUserRecentRequest) -> GetUserRecentRequest, U: Into<GetBeatmapUser> {
-            let mut uri = String::new();
-            uri.push_str(API_URL);
-            uri.push_str("/get_user_recent?k=");
-            uri.push_str(key);
+        mutate_uri(&mut uri, f(GetUserRecentRequest::default()).user(user.into()).0);
 
-            super::mutate_uri(&mut uri, f(GetUserRecentRequest::default()).user(user.into()).0);
+        let response = self.get(&uri).send()?;
 
-            let response = self.get(&uri).send()?;
-
-            serde_json::from_reader(response).map_err(From::from)
-        }
+        serde_json::from_reader(response).map_err(From::from)
     }
 }
 
-#[cfg(any(feature="hyper"))]
 fn mutate_uri(uri: &mut String, map: BTreeMap<&str, String>) {
     for (k, v) in map {
         uri.push('&');
