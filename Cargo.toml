@@ -25,4 +25,5 @@ optional = true
 version = "0.10"
 
 [features]
-default = ["hyper"]
+default = ["hyper-support"]
+hyper-support = ["hyper"]
