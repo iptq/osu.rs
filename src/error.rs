@@ -7,12 +7,12 @@
 //! [`Result`]: type.Result.html
 
 use serde_json::Error as JsonError;
-use std::io::Error as IoError;
 use std::error::Error as StdError;
 use std::fmt::{Display, Error as FmtError, Formatter, Result as FmtResult};
+use std::io::Error as IoError;
 use std::result::Result as StdResult;
 
-#[cfg(feature="hyper")]
+#[cfg(feature = "hyper")]
 use hyper::Error as HyperError;
 
 /// The result type used throughout the library.
@@ -27,7 +27,7 @@ pub enum Error {
     /// An error from `std::fmt`
     Format(FmtError),
     /// A `hyper` crate error
-    #[cfg(feature="hyper")]
+    #[cfg(feature = "hyper")]
     Hyper(HyperError),
     /// A `serde_json` crate error
     Json(JsonError),
@@ -47,7 +47,7 @@ impl From<IoError> for Error {
     }
 }
 
-#[cfg(feature="hyper")]
+#[cfg(feature = "hyper")]
 impl From<HyperError> for Error {
     fn from(err: HyperError) -> Error {
         Error::Hyper(err)
@@ -72,7 +72,7 @@ impl StdError for Error {
             Error::Format(ref inner) => inner.description(),
             Error::Json(ref inner) => inner.description(),
             Error::Io(ref inner) => inner.description(),
-            #[cfg(feature="hyper")]
+            #[cfg(feature = "hyper")]
             Error::Hyper(ref inner) => inner.description(),
         }
     }
