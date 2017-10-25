@@ -33,10 +33,6 @@ pub enum Error {
     Json(JsonError),
     /// A `std::io` module error
     Io(IoError),
-    /// A json decoding error, with a description and the offending value
-    Decode(&'static str, Value),
-    /// A miscellaneous error, with a description
-    Other(&'static str),
 }
 
 impl From<FmtError> for Error {
@@ -76,7 +72,6 @@ impl StdError for Error {
             Error::Format(ref inner) => inner.description(),
             Error::Json(ref inner) => inner.description(),
             Error::Io(ref inner) => inner.description(),
-            Error::Decode(msg, _) | Error::Other(msg) => msg,
             #[cfg(feature="hyper")]
             Error::Hyper(ref inner) => inner.description(),
         }
