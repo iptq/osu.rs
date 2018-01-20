@@ -1,3 +1,5 @@
+//! Support for the Reqwest crate.
+
 use reqwest::Client;
 use serde_json;
 use std::collections::BTreeMap;

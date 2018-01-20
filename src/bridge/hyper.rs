@@ -1,3 +1,5 @@
+//! Support for the Hyper crate.
+
 use futures::{Future, Stream, future};
 use hyper::client::{Client, Connect};
 use hyper::{Error as HyperError, Uri};
