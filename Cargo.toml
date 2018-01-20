@@ -24,6 +24,10 @@ version = "~0.1"
 optional = true
 version = "0.11"
 
+[dependencies.reqwest]
+optional = true
+version = "~0.8"
+
 [dev-dependencies]
 hyper = "0.10"
 hyper-native-tls = "0.2"
@@ -31,3 +35,4 @@ hyper-native-tls = "0.2"
 [features]
 default = ["hyper-support"]
 hyper-support = ["futures", "hyper"]
+reqwest-support = ["reqwest"]

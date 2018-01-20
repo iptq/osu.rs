@@ -30,6 +30,8 @@
 extern crate futures;
 #[cfg(feature="hyper")]
 extern crate hyper;
+#[cfg(feature = "reqwest")]
+extern crate reqwest;
 
 extern crate serde;
 extern crate serde_json;
