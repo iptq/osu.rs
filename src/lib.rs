@@ -21,7 +21,7 @@
 //! # fn main() {
 //! #     try_main().unwrap();
 //! # }
-// TODO: #![deny(missing_docs)]
+#![deny(missing_docs)]
 
 #[macro_use] extern crate bitflags;
 #[macro_use] extern crate serde_derive;

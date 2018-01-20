@@ -1,3 +1,5 @@
+//! Bridged implementation support for various HTTP clients.
+
 #[cfg(feature = "hyper")]
 pub mod hyper;
 #[cfg(feature = "reqwest")]
