@@ -21,20 +21,21 @@
 //! # fn main() {
 //! #     try_main().unwrap();
 //! # }
+
 #![deny(missing_docs)]
 
 #[macro_use] extern crate bitflags;
 #[macro_use] extern crate serde_derive;
 
+extern crate serde;
+extern crate serde_json;
+
 #[cfg(feature = "futures")]
 extern crate futures;
-#[cfg(feature="hyper")]
+#[cfg(feature = "hyper")]
 extern crate hyper;
 #[cfg(feature = "reqwest")]
 extern crate reqwest;
-
-extern crate serde;
-extern crate serde_json;
 
 /// The base URL for all requests to osu!'s API.
 ///
