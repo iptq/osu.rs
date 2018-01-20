@@ -17,7 +17,7 @@ macro_rules! try_uri {
     }
 }
 
-/// A trait used for implementation on various HTTP clients.
+/// A trait used for implementation on Hyper's client.
 pub trait OsuHyperRequester {
     /// Retrieves filtered beatmap results.
     ///
