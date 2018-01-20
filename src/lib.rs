@@ -26,6 +26,8 @@
 #[macro_use] extern crate bitflags;
 #[macro_use] extern crate serde_derive;
 
+#[cfg(feature = "futures")]
+extern crate futures;
 #[cfg(feature="hyper")]
 extern crate hyper;
 

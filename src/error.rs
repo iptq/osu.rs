@@ -13,7 +13,7 @@ use std::io::Error as IoError;
 use std::result::Result as StdResult;
 
 #[cfg(feature = "hyper")]
-use hyper::Error as HyperError;
+use hyper::error::{Error as HyperError, UriError};
 
 /// The result type used throughout the library.
 pub type Result<T> = StdResult<T, Error>;
@@ -33,6 +33,8 @@ pub enum Error {
     Json(JsonError),
     /// A `std::io` module error
     Io(IoError),
+    /// An error from the `hyper` crate while parsing a URI.
+    Uri(UriError),
 }
 
 impl From<FmtError> for Error {
@@ -60,6 +62,13 @@ impl From<JsonError> for Error {
     }
 }
 
+#[cfg(feature = "hyper")]
+impl From<UriError> for Error {
+    fn from(err: UriError) -> Error {
+        Error::Uri(err)
+    }
+}
+
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         f.write_str(self.description())
@@ -74,6 +83,8 @@ impl StdError for Error {
             Error::Io(ref inner) => inner.description(),
             #[cfg(feature = "hyper")]
             Error::Hyper(ref inner) => inner.description(),
+            #[cfg(feature = "hyper")]
+            Error::Uri(ref inner) => inner.description(),
         }
     }
 }
