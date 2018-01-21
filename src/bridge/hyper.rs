@@ -22,163 +22,28 @@ macro_rules! try_uri {
 /// A trait used for implementation on Hyper's client.
 pub trait OsuHyperRequester {
     /// Retrieves filtered beatmap results.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve 25 beatmaps, including convert beatmaps:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::OsuHyperRequester;
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    ///
-    /// let _ = client.get_beatmaps(osu_key, |f| f
-    ///     .include_converted(true)
-    ///     .limit(25))?;
-    /// #
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     fn get_beatmaps<F, T>(&self, key: T, f: F)
         -> Box<Future<Item = Vec<Beatmap>, Error = Error>>
         where F: FnOnce(GetBeatmapsRequest) -> GetBeatmapsRequest,
               T: AsRef<str>;
 
     /// Retrieves information about a match.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve the match with an ID of `71654`:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::OsuHyperRequester;
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let cient = Client::new();
-    ///
-    /// let _ = client.get_beatmaps(osu_key, 71654)?;
-    /// #
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     fn get_match<T: AsRef<str>>(&self, key: T, match_id: u64)
         -> Box<Future<Item = Match, Error = Error>>;
 
     /// Retrieves scores for a beatmap.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve the scores for the beatmap with an ID of `774965`:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::OsuHyperRequester;
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    ///
-    /// let scores = client.get_scores(osu_key, 774965, |f| f.limit(10))?;
-    /// println!("There are {} scores", scores.len());
-    /// #
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     fn get_scores<F, T>(&self, key: T, beatmap_id: u64, f: F)
         -> Box<Future<Item = Vec<GameScore>, Error = Error>>
         where F: FnOnce(GetScoreRequest) -> GetScoreRequest,
               T: AsRef<str>;
 
     /// Retrieves information about a user.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve information about the user with a username of `"Cookiezi"`:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::OsuHyperRequester;
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    ///
-    /// let user = client.get_user(osu_key, "Cookiezi", |f| f)?;
-    /// println!("{}'s accuracy is {}", user.username, user.accuracy);
-    /// #
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     fn get_user<F, U>(&self, key: &str, user: U, f: F)
         -> Box<Future<Item = Vec<User>, Error = Error>>
         where F: FnOnce(GetUserRequest) -> GetUserRequest,
               U: Into<GetBeatmapUser>;
 
     /// Retrieves the user's best performances.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve the user's 5 best performances:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::OsuHyperRequester;
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    /// let user = "Cookiezi";
-    ///
-    /// let performances = client.get_user_best(osu_key, user, |f| f
-    ///     .limit(5))?;
-    ///
-    /// if let Some(performance) = performances.first() {
-    ///     println!("{}'s best performance was on beatmap {}", user, performance.beatmap_id);
-    /// } else {
-    ///     println!("{} does not have a best performance", user);
-    /// }
-    /// ```
     fn get_user_best<F, T, U>(&self, key: T, user: U, f: F)
         -> Box<Future<Item = Vec<Performance>, Error = Error>>
         where F: FnOnce(GetUserBestRequest) -> GetUserBestRequest,
@@ -186,34 +51,6 @@ pub trait OsuHyperRequester {
               U: Into<GetBeatmapUser>;
 
     /// Retrieves information about a user's recent plays.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve a user's 10 most recent plays:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::OsuHyperRequester;
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    ///
-    /// let recent_plays = client.get_user_recent(osu_key, "Cookiezi", |f| f
-    ///     .limit(10));
-    /// println!("We got {} results", recent_plays.len());
-    /// #
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     fn get_user_recent<F, T, U>(&self, key: T, user: U, f: F)
         -> Box<Future<Item = Vec<RecentPlay>, Error = Error>>
         where F: FnOnce(GetUserRecentRequest) -> GetUserRecentRequest,
