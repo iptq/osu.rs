@@ -2,11 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.2.0] - 2018-01-20
 
 ### Added
 
+- Added bridged support for the `reqwest` crate
+
 ### Changed
+
+- Updated to hyper v0.11, rewriting the Hyper support bridge
 
 ## [0.1.1] - 2016-11-22
 
@@ -19,6 +23,5 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Initial commit.
 
-
-[Unreleased]: https://github.com/zeyla/osu.rs/compare/v0.1.0...HEAD
+[0.1.1]: https://github.com/zeyla/osu.rs/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/zeyla/osu.rs/compare/v0.1.0...v0.1.1

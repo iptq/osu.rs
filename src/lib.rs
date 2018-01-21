@@ -9,7 +9,7 @@
 //! Add the following dependency to your Cargo.toml:
 //!
 //! ```toml
-//! osu = "0.1"
+//! osu = "0.2"
 //! ```
 //!
 //! And include it in your project:
