@@ -8,7 +8,7 @@ keywords = ["osu", "api"]
 name = "osu"
 readme = "README.md"
 repository = "https://github.com/zeyla/osu.rs.git"
-version = "0.1.1"
+version = "0.2.0"
 
 [dependencies]
 bitflags = "^1.0"
