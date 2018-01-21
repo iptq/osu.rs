@@ -72,6 +72,7 @@ extern crate reqwest;
 use osu::bridge::reqwest::OsuReqwestRequester;
 use reqwest::Client;
 use std::error::Error;
+use std::env;
 
 fn try_main() -> Result<(), Box<Error>> {
     let key = env::var("OSU_KEY")?;

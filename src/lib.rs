@@ -83,6 +83,7 @@
 //! # #[cfg(feature = "reqwest-support")]
 //! use reqwest::Client;
 //! use std::error::Error;
+//! use std::env;
 //!
 //! # #[cfg(feature = "reqwest-support")]
 //! fn try_main() -> Result<(), Box<Error>> {
