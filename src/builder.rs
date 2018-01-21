@@ -145,37 +145,6 @@ impl<'a> GetScoreRequest<'a> {
     }
 
     /// Filters results by scores with certain Mods enabled.
-    ///
-    /// # Examples
-    ///
-    /// Filter beatmap score results by [`EASY`], limiting by 5 results:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::{Mods, OsuRequester};
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    /// let beatmap_id = 15412;
-    ///
-    /// let _ = client.get_scores(osu_key, beatmap_id, |f| f
-    ///     .limit(5)
-    ///     .mods(osu::EASY))?;
-    /// #
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
-    ///
-    /// [`EASY`]: ../constant.EASY.html
     pub fn mods(mut self, mods: Mods) -> Self {
         self.0.insert("mods", mods.bits().to_string());
 
@@ -211,32 +180,6 @@ pub struct GetUserBestRequest<'a>(pub BTreeMap<&'a str, String>);
 
 impl<'a> GetUserBestRequest<'a> {
     /// Specify the number of best performances to retrieve at maximum.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve `10` of the best performances - at most - for the user with an
-    /// ID of `8`:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::OsuRequester;
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    ///
-    /// let _ = client.get_user_best(osu_key, 8, |f| f.limit(10))?;
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     pub fn limit(mut self, limit: u16) -> Self {
         self.0.insert("limit", limit.to_string());
 
@@ -244,32 +187,6 @@ impl<'a> GetUserBestRequest<'a> {
     }
 
     /// Specify the mode to filter a user's performances by.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve a user's best performances, filtered by [`PlayMode::Mania`]:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::{OsuRequester, PlayMode};
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    ///
-    /// let _ = client.get_user_best(osu_key, 1, |f| f.mode(PlayMode::Mania))?;
-    /// #
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     pub fn mode(mut self, mode: PlayMode) -> Self {
         if let Ok(mode) = serde_json::to_string(&mode) {
             self.0.insert("m", mode);
@@ -308,32 +225,6 @@ pub struct GetUserRecentRequest<'a>(pub BTreeMap<&'a str, String>);
 
 impl<'a> GetUserRecentRequest<'a> {
     /// Specify the number of recent plays to retrieve at maximum.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve `10` of the recent plays - at most - for the user with an ID of
-    /// `8`:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::OsuRequester;
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    ///
-    /// let _ = client.get_user_recent(osu_key, 8, |f| f.limit(10))?;
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     pub fn limit(mut self, limit: u16) -> Self {
         self.0.insert("limit", limit.to_string());
 
@@ -383,33 +274,6 @@ pub struct GetUserRequest<'a>(pub BTreeMap<&'a str, String>);
 
 impl<'a> GetUserRequest<'a> {
     /// Specify the number of event days to filter by.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve a user, filtering by 3 event days:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::OsuRequester;
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    /// let user_id = 17;
-    ///
-    /// let _ = client.get_user(osu_key, user_id, 3)?;
-    /// #
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     pub fn event_days(mut self, event_days: u8) -> Self {
         self.0.insert("event_days", event_days.to_string());
 
@@ -417,32 +281,6 @@ impl<'a> GetUserRequest<'a> {
     }
 
     /// Specify the mode to filter results by.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve a user, filtered by [`PlayMode::Mania`]:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::{OsuRequester, PlayMode};
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    ///
-    /// let _ = client.get_user(osu_key, 1, |f| f.mode(PlayMode::Mania))?;
-    /// #
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     pub fn mode(mut self, mode: PlayMode) -> Self {
         if let Ok(mode) = serde_json::to_string(&mode) {
             self.0.insert("m", mode);
@@ -455,32 +293,6 @@ impl<'a> GetUserRequest<'a> {
     /// Id, or a string to search by username.
     ///
     /// This will automatically set the 'type' based on what is passed.
-    ///
-    /// # Examples
-    ///
-    /// Retrieve a user by their ID:
-    ///
-    /// ```rust,no_run
-    /// # extern crate hyper;
-    /// # extern crate osu;
-    /// #
-    /// # fn try_main() -> Result<(), Box<Error>> {
-    /// use hyper::Client;
-    /// use osu::OsuRequester;
-    /// use std::env;
-    ///
-    /// let osu_key = env::var("OSU_KEY")?;
-    /// let client = Client::new();
-    /// let user = "Cookiezi";
-    ///
-    /// let _ = client.get_user(osu_key, user, |f| f.user(user))?;
-    /// #     Ok(())
-    /// # }
-    /// #
-    /// # fn main() {
-    /// #     try_main().unwrap();
-    /// # }
-    /// ```
     #[doc(hidden)]
     pub fn user<U: Into<GetBeatmapUser>>(mut self, user: U) -> Self {
         match user.into() {

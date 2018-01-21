@@ -1,28 +1,107 @@
-//! An unofficial Rust library for interacting with the osu! API.
+//! # osu.rs
 //!
-//! # Examples
+//! Unofficial Rust crate for the osu! API.
 //!
-//! Retrieve a beatmap by ID:
+//! [Documentation][docs]
+//!
+//! ### Installation
+//!
+//! Add the following dependency to your Cargo.toml:
+//!
+//! ```toml
+//! osu = "0.1"
+//! ```
+//!
+//! And include it in your project:
+//!
+//! ```rust
+//! extern crate osu;
+//! ```
+//!
+//! ### Examples
+//!
+//! Using `hyper` with the `hyper-tls` HTTPS connector, retrieve the start time of a
+//! match by ID:
 //!
 //! ```rust,no_run
+//! # #[cfg(feature = "hyper-support")]
+//! extern crate futures;
+//! # #[cfg(feature = "hyper-support")]
 //! extern crate hyper;
+//! # #[cfg(feature = "hyper-support")]
+//! extern crate hyper_tls;
 //! extern crate osu;
+//! # #[cfg(feature = "hyper-support")]
+//! extern crate tokio_core;
 //!
+//! # #[cfg(feature = "hyper-support")]
+//! use futures::Future;
+//! # #[cfg(feature = "hyper-support")]
+//! use hyper::client::{Client, HttpConnector};
+//! # #[cfg(feature = "hyper-support")]
+//! use hyper_tls::HttpsConnector;
+//! use osu::bridge::hyper::OsuHyperRequester;
+//! use std::error::Error;
+//! use std::env;
+//! # #[cfg(feature = "hyper-support")]
+//! use tokio_core::reactor::Core;
+//!
+//! # #[cfg(feature = "hyper-support")]
+//! fn try_main() -> Result<(), Box<Error>> {
+//!     let mut core = Core::new()?;
+//!     let client = Client::configure()
+//!         .connector(HttpsConnector::new(4, &core.handle())?)
+//!         .build(&core.handle());
+//!     let key = env::var("OSU_KEY")?;
+//!
+//!     let done = client.get_match(&key, 71641).map(|found| {
+//!         println!("Match start time: {}", found.start_time);
+//!
+//!         ()
+//!     }).map_err(|_| ());
+//!
+//!     core.run(done).expect("Error running core");
+//!
+//!     Ok(())
+//! }
+//!
+//! fn main() {
+//!     # #[cfg(feature = "hyper-support")]
+//!     try_main().unwrap();
+//! }
+//! ```
+//!
+//! Using reqwest, retrieve a match's start time by ID:
+//!
+//! ```rust,no_run
+//! extern crate osu;
+//! # #[cfg(feature = "reqwest-support")]
+//! extern crate reqwest;
+//!
+//! # #[cfg(feature = "reqwest-support")]
+//! use osu::bridge::reqwest::OsuReqwestRequester;
+//! # #[cfg(feature = "reqwest-support")]
+//! use reqwest::Client;
 //! use std::error::Error;
 //!
-//! # fn try_main() -> Result<(), Box<Error>> {
-//! use hyper::Client;
-//! use osu::GetBeatmapsRequest;
+//! # #[cfg(feature = "reqwest-support")]
+//! fn try_main() -> Result<(), Box<Error>> {
+//!     let key = env::var("OSU_KEY")?;
+//!     let client = Client::new();
+//!     let found = client.get_match(&key, 71641)?;
 //!
-//! let client = Client::new();
-//! let response = client.get_beatmap(&key, |f| f.beatmap_id(71423))?;
-//! # }
-//! #
-//! # fn main() {
-//! #     try_main().unwrap();
-//! # }
+//!     println!("Match start time: {}", found.start_time);
+//!
+//!     Ok(())
+//! }
+//!
+//! fn main() {
+//!     # #[cfg(feature = "reqwest-support")]
+//!     try_main().unwrap();
+//! }
+//! ```
 
-#![deny(missing_docs)]
+// #![deny(missing_docs)]
 
 #[macro_use] extern crate bitflags;
 #[macro_use] extern crate serde_derive;
